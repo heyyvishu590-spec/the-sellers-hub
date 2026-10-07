@@ -1,0 +1,22 @@
+const seed=[{id:1,name:"Premium Oversized T-Shirt",price:699,stock:25,image:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=700&q=80"},{id:2,name:"Classic Denim Jacket",price:1499,stock:12,image:"https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=700&q=80"},{id:3,name:"Minimal Sneakers",price:1999,stock:18,image:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=80"},{id:4,name:"Smart Backpack",price:999,stock:30,image:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=80"}];
+let products=JSON.parse(localStorage.getItem("tsh_products")||"null")||seed;
+let cart=JSON.parse(localStorage.getItem("tsh_cart")||"[]");
+const $=s=>document.querySelector(s);
+function save(){localStorage.setItem("tsh_products",JSON.stringify(products));localStorage.setItem("tsh_cart",JSON.stringify(cart))}
+function money(n){return "₹"+Number(n).toLocaleString("en-IN")}
+function renderProducts(list=products){$("#products").innerHTML=list.map(p=>`<article class="product"><img src="${p.image||'https://placehold.co/700x500?text=Product'}" onerror="this.src='https://placehold.co/700x500?text=Product'"><div class="product-body"><h3>${escapeHtml(p.name)}</h3><div class="muted">${p.stock} in stock</div><div class="price">${money(p.price)}</div><button class="add" onclick="addCart(${p.id})">Add to Cart</button></div></article>`).join("")||"<p>No products found.</p>";$("#productStat").textContent=products.length}
+function renderSeller(){ $("#sellerProducts").textContent=products.length; $("#sellerOrders").textContent=JSON.parse(localStorage.getItem("tsh_orders")||"[]").length; let rev=JSON.parse(localStorage.getItem("tsh_orders")||"[]").reduce((a,o)=>a+o.total,0); $("#sellerRevenue").textContent=money(rev); $("#sellerTable").innerHTML=products.map(p=>`<tr><td>${escapeHtml(p.name)}</td><td>${money(p.price)}</td><td>${p.stock}</td><td><button class="delete" onclick="removeProduct(${p.id})">Delete</button></td></tr>`).join("")}
+function renderCart(){let count=cart.reduce((a,x)=>a+x.qty,0);$("#cartCount").textContent=count;$("#cartItems").innerHTML=cart.length?cart.map(x=>`<div class="cart-item"><div><b>${escapeHtml(x.name)}</b><div class="muted">${x.qty} × ${money(x.price)}</div></div><button class="delete" onclick="removeCart(${x.id})">×</button></div>`).join(""):"<p class='muted'>Your cart is empty.</p>";$("#cartTotal").textContent=money(cart.reduce((a,x)=>a+x.price*x.qty,0))}
+function addCart(id){let p=products.find(x=>x.id===id);let x=cart.find(x=>x.id===id);if(x)x.qty++;else cart.push({id:p.id,name:p.name,price:p.price,qty:1});save();renderCart();toast("Added to cart")}
+function removeCart(id){cart=cart.filter(x=>x.id!==id);save();renderCart()}
+function removeProduct(id){products=products.filter(x=>x.id!==id);save();renderProducts();renderSeller();toast("Product deleted")}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function toast(t){let x=$("#toast");x.textContent=t;x.classList.add("show");setTimeout(()=>x.classList.remove("show"),1800)}
+$("#search").addEventListener("input",e=>{let q=e.target.value.toLowerCase();renderProducts(products.filter(p=>p.name.toLowerCase().includes(q)))});
+$("#addProductBtn").onclick=()=>$("#modal").classList.remove("hidden");
+$("#closeModal").onclick=()=>$("#modal").classList.add("hidden");
+$("#productForm").onsubmit=e=>{e.preventDefault();let f=new FormData(e.target);products.push({id:Date.now(),name:f.get("name"),price:Number(f.get("price")),stock:Number(f.get("stock")),image:f.get("image")});save();renderProducts();renderSeller();e.target.reset();$("#modal").classList.add("hidden");toast("Product published")};
+$("#cartBtn").onclick=()=>$("#cart").classList.add("open");
+$("#closeCart").onclick=()=>$("#cart").classList.remove("open");
+$("#checkout").onclick=()=>{if(!cart.length)return toast("Cart is empty");let orders=JSON.parse(localStorage.getItem("tsh_orders")||"[]");orders.push({id:Date.now(),total:cart.reduce((a,x)=>a+x.price*x.qty,0),items:cart});localStorage.setItem("tsh_orders",JSON.stringify(orders));cart=[];save();renderCart();renderSeller();toast("Demo order placed")};
+renderProducts();renderSeller();renderCart();
