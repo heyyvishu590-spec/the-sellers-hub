@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Sellers Hub</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">The<span>Sellers</span>Hub</a>
+  <nav>
+    <a href="#shop">Shop</a>
+    <a href="#seller">Seller</a>
+    <button id="cartBtn" class="nav-btn">Cart <b id="cartCount">0</b></button>
+  </nav>
+</header>
+
+<main>
+<section class="hero">
+  <div>
+    <p class="eyebrow">MARKETPLACE PLATFORM</p>
+    <h1>Buy smarter.<br><span>Sell faster.</span></h1>
+    <p class="hero-copy">A modern marketplace where buyers discover products and sellers grow their business.</p>
+    <div class="hero-actions">
+      <a class="primary" href="#shop">Start Shopping</a>
+      <a class="secondary" href="#seller">Open Seller Panel</a>
+    </div>
+  </div>
+  <div class="hero-card">
+    <div class="stat"><strong id="productStat">0</strong><span>Products</span></div>
+    <div class="stat"><strong>24/7</strong><span>Marketplace</span></div>
+    <div class="stat"><strong>2</strong><span>Panels</span></div>
+  </div>
+</section>
+
+<section id="shop" class="section">
+  <div class="section-head">
+    <div><p class="eyebrow">BUYER PANEL</p><h2>Explore products</h2></div>
+    <input id="search" class="search" placeholder="Search products...">
+  </div>
+  <div id="products" class="product-grid"></div>
+</section>
+
+<section id="seller" class="section seller-section">
+  <div class="section-head">
+    <div><p class="eyebrow">SELLER PANEL</p><h2>Manage your store</h2></div>
+    <button id="addProductBtn" class="primary">+ Add Product</button>
+  </div>
+  <div class="seller-layout">
+    <div class="seller-stats">
+      <div class="dash-card"><span>Total Products</span><strong id="sellerProducts">0</strong></div>
+      <div class="dash-card"><span>Orders</span><strong id="sellerOrders">0</strong></div>
+      <div class="dash-card"><span>Revenue</span><strong id="sellerRevenue">₹0</strong></div>
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr><th>Product</th><th>Price</th><th>Stock</th><th>Action</th></tr></thead>
+      <tbody id="sellerTable"></tbody></table>
+    </div>
+  </div>
+</section>
+</main>
+
+<div id="modal" class="modal hidden">
+  <div class="modal-box">
+    <button class="close" id="closeModal">×</button>
+    <h2>Add Product</h2>
+    <form id="productForm">
+      <label>Product name<input required name="name" placeholder="e.g. Premium Jacket"></label>
+      <label>Price (₹)<input required type="number" min="1" name="price" placeholder="999"></label>
+      <label>Stock<input required type="number" min="0" name="stock" placeholder="20"></label>
+      <label>Image URL<input name="image" placeholder="https://..."></label>
+      <button class="primary full" type="submit">Publish Product</button>
+    </form>
+  </div>
+</div>
+
+<div id="cart" class="drawer">
+  <div class="drawer-head"><h2>Your Cart</h2><button id="closeCart">×</button></div>
+  <div id="cartItems"></div>
+  <div class="cart-bottom"><strong>Total <span id="cartTotal">₹0</span></strong><button id="checkout" class="primary full">Place Demo Order</button></div>
+</div>
+<div id="toast" class="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
